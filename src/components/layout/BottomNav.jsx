@@ -14,14 +14,14 @@ const BottomNav = ({ activeTab, onTabChange }) => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-slate-900/95 backdrop-blur-xl border-t border-white/10 z-50 pb-safe">
+    <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-xl border-t border-blue-200 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
       <div className="grid grid-cols-4 h-16 max-w-3xl mx-auto">
         {navItems.map(({ id, icon: Icon, label }) => (
           <button 
             key={id}
             onClick={() => onTabChange(id)} 
             className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-              activeTab === id ? 'text-blue-400' : 'text-slate-500'
+              activeTab === id ? 'text-blue-600' : 'text-slate-400'
             }`}
             aria-label={label}
           >

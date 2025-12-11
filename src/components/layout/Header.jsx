@@ -42,9 +42,9 @@ const Header = ({ activeTab, onAddEvent, user, onSignOut }) => {
   };
 
   return (
-    <header className="fixed top-0 w-full z-40 bg-slate-900/80 backdrop-blur-xl border-b border-white/5 px-4 h-16 flex items-center justify-between shadow-xl">
+    <header className="fixed top-0 w-full z-40 bg-white/90 backdrop-blur-xl border-b border-blue-200 px-4 h-16 flex items-center justify-between shadow-lg">
       <div>
-        <h1 className="text-lg font-bold text-white tracking-wide">
+        <h1 className="text-lg font-bold text-slate-800 tracking-wide">
           {getTitle()}
         </h1>
       </div>
@@ -65,7 +65,7 @@ const Header = ({ activeTab, onAddEvent, user, onSignOut }) => {
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-2 rounded-lg transition-colors"
             aria-label="用戶選單"
           >
             {user?.photoURL ? (
@@ -75,27 +75,27 @@ const Header = ({ activeTab, onAddEvent, user, onSignOut }) => {
                 className="w-6 h-6 rounded-full"
               />
             ) : (
-              <User size={18} className="text-slate-400" />
+              <User size={18} className="text-blue-600" />
             )}
-            <span className="text-sm text-slate-300 hidden sm:inline">
+            <span className="text-sm text-slate-700 hidden sm:inline">
               {getUserDisplayName()}
             </span>
           </button>
 
           {/* Dropdown Menu */}
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl overflow-hidden">
-              <div className="p-3 border-b border-slate-700">
-                <div className="text-sm font-medium text-white">
+            <div className="absolute right-0 mt-2 w-48 bg-white border border-blue-200 rounded-lg shadow-xl overflow-hidden">
+              <div className="p-3 border-b border-blue-100">
+                <div className="text-sm font-medium text-slate-800">
                   {getUserDisplayName()}
                 </div>
                 {user?.email && (
-                  <div className="text-xs text-slate-400 mt-1">
+                  <div className="text-xs text-slate-600 mt-1">
                     {user.email}
                   </div>
                 )}
                 {user?.isAnonymous && (
-                  <div className="text-xs text-orange-400 mt-1">
+                  <div className="text-xs text-orange-600 mt-1">
                     訪客模式
                   </div>
                 )}
@@ -105,7 +105,7 @@ const Header = ({ activeTab, onAddEvent, user, onSignOut }) => {
                   setShowUserMenu(false);
                   onSignOut();
                 }}
-                className="w-full px-3 py-2 text-left text-sm text-slate-300 hover:bg-slate-700 flex items-center gap-2"
+                className="w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-blue-50 flex items-center gap-2"
               >
                 <LogOut size={16} />
                 登出

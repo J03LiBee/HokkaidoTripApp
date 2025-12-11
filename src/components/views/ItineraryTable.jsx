@@ -31,10 +31,10 @@ const ItineraryTable = ({ itinerary, onEditSlot }) => {
       <div className="flex justify-end gap-2 mb-4">
         <button
           onClick={() => setViewMode('list')}
-          className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+          className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-md ${
             shouldShowList
               ? 'bg-blue-600 text-white'
-              : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+              : 'bg-white border border-blue-200 text-slate-600 hover:bg-blue-50'
           }`}
         >
           <List size={18} />
@@ -42,10 +42,10 @@ const ItineraryTable = ({ itinerary, onEditSlot }) => {
         </button>
         <button
           onClick={() => setViewMode('table')}
-          className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+          className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-md ${
             !shouldShowList
               ? 'bg-blue-600 text-white'
-              : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+              : 'bg-white border border-blue-200 text-slate-600 hover:bg-blue-50'
           }`}
         >
           <Calendar size={18} />
@@ -58,19 +58,19 @@ const ItineraryTable = ({ itinerary, onEditSlot }) => {
         <ItineraryList itinerary={itinerary} onEditEvent={onEditSlot} />
       ) : (
         /* Table View (Desktop) */
-        <div className="h-[calc(100vh-200px)] w-full overflow-hidden flex flex-col bg-slate-900 border border-slate-700 rounded-xl relative">
+        <div className="h-[calc(100vh-200px)] w-full overflow-hidden flex flex-col bg-white border border-blue-200 rounded-xl relative shadow-lg">
       {/* Header Row */}
-      <div className="flex overflow-x-auto border-b border-slate-700 bg-slate-800/90 z-20 hide-scrollbar ml-14">
+      <div className="flex overflow-x-auto border-b border-blue-200 bg-blue-50 z-20 hide-scrollbar ml-14">
         <div className="flex">
           {TRIP_DATES.map(date => (
             <div 
               key={date} 
-              className="flex-none w-32 py-3 text-center border-r border-slate-700/50"
+              className="flex-none w-32 py-3 text-center border-r border-blue-200"
             >
-              <div className="text-white font-bold text-sm">
+              <div className="text-slate-800 font-bold text-sm">
                 {formatDateShort(date)}
               </div>
-              <div className="text-slate-500 text-[10px]">
+              <div className="text-slate-600 text-[10px]">
                 {date.slice(5)}
               </div>
             </div>
@@ -82,11 +82,11 @@ const ItineraryTable = ({ itinerary, onEditSlot }) => {
       <div className="flex-1 overflow-auto relative">
         <div className="flex relative min-w-max">
           {/* Sticky Time Column */}
-          <div className="sticky left-0 z-10 w-14 bg-slate-800 border-r border-slate-700 flex flex-col">
+          <div className="sticky left-0 z-10 w-14 bg-blue-50 border-r border-blue-200 flex flex-col">
             {TIME_SLOTS.map(h => (
               <div 
                 key={h} 
-                className="h-24 flex items-center justify-center text-xs text-slate-400 border-b border-slate-700/50 relative"
+                className="h-24 flex items-center justify-center text-xs text-slate-600 border-b border-blue-200 relative"
               >
                 {h}:00
               </div>
@@ -98,7 +98,7 @@ const ItineraryTable = ({ itinerary, onEditSlot }) => {
             {TRIP_DATES.map(date => (
               <div 
                 key={date} 
-                className="w-32 flex-none flex flex-col border-r border-slate-700/50"
+                className="w-32 flex-none flex flex-col border-r border-blue-200"
               >
                 {TIME_SLOTS.map(h => {
                   const event = getEvent(date, h);
@@ -106,7 +106,7 @@ const ItineraryTable = ({ itinerary, onEditSlot }) => {
                     <div 
                       key={`${date}-${h}`} 
                       onClick={() => onEditSlot(date, `${h < 10 ? '0'+h : h}:00`, event)}
-                      className="h-24 p-1 border-b border-slate-700/50 relative group transition-colors hover:bg-white/5 cursor-pointer"
+                      className="h-24 p-1 border-b border-blue-100 relative group transition-colors hover:bg-blue-50 cursor-pointer"
                     >
                       {event ? (
                         <div className={`w-full h-full rounded p-1.5 text-xs overflow-hidden border ${getEventTypeColor(event.type)}`}>
@@ -122,7 +122,7 @@ const ItineraryTable = ({ itinerary, onEditSlot }) => {
                         </div>
                       ) : (
                         <div className="w-full h-full flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <Plus size={16} className="text-slate-600" />
+                          <Plus size={16} className="text-blue-400" />
                         </div>
                       )}
                     </div>

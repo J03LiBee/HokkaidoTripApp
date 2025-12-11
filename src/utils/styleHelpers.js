@@ -8,13 +8,13 @@
 export const getEventTypeColor = (type) => {
   switch(type) {
     case 'food': 
-      return 'bg-orange-500/20 border-orange-500/30 text-orange-200';
+      return 'bg-orange-100 border-orange-300 text-orange-800';
     case 'transport': 
-      return 'bg-blue-500/20 border-blue-500/30 text-blue-200';
+      return 'bg-sky-100 border-sky-300 text-sky-800';
     case 'stay': 
-      return 'bg-purple-500/20 border-purple-500/30 text-purple-200';
+      return 'bg-purple-100 border-purple-300 text-purple-800';
     default: 
-      return 'bg-emerald-500/20 border-emerald-500/30 text-emerald-200';
+      return 'bg-emerald-100 border-emerald-300 text-emerald-800';
   }
 };
 
@@ -23,7 +23,7 @@ export const getEventTypeColor = (type) => {
  */
 export const getStatusColor = (status) => {
   return status === '已結算' 
-    ? 'border-green-500/30 text-green-400 bg-green-500/10'
-    : 'border-orange-500/30 text-orange-400 bg-orange-500/10';
+    ? 'border-green-400 text-green-700 bg-green-100'
+    : 'border-orange-400 text-orange-700 bg-orange-100';
 };
 

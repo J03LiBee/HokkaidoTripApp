@@ -46,7 +46,7 @@ const ItineraryList = ({ itinerary, onEditEvent }) => {
       {sortedDates.map(date => (
         <div key={date} className="space-y-3">
           {/* Date Header */}
-          <div className="sticky top-20 z-10 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700 pb-2 pt-2">
+          <div className="sticky top-20 z-10 bg-white/95 backdrop-blur-sm border-b border-blue-200 pb-2 pt-2 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-12 h-12 bg-blue-600 rounded-xl">
                 <div className="text-center">
@@ -59,14 +59,14 @@ const ItineraryList = ({ itinerary, onEditEvent }) => {
                 </div>
               </div>
               <div>
-                <div className="text-white font-bold">
+                <div className="text-slate-800 font-bold">
                   {formatDateShort(date)}
                 </div>
-                <div className="text-slate-400 text-sm">
+                <div className="text-slate-600 text-sm">
                   星期{getDayOfWeek(date)}
                 </div>
               </div>
-              <div className="ml-auto text-xs text-slate-500">
+              <div className="ml-auto text-xs text-slate-600">
                 {groupedByDate[date].length} 個活動
               </div>
             </div>

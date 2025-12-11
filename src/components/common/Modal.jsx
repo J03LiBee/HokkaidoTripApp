@@ -9,13 +9,13 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="bg-slate-800 border border-slate-600 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-scaleIn">
-        <div className="flex justify-between items-center p-4 border-b border-slate-700 bg-slate-800/50">
-          <h3 className="text-xl font-bold text-blue-100">{title}</h3>
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-white border border-blue-200 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-scaleIn">
+        <div className="flex justify-between items-center p-4 border-b border-blue-200 bg-blue-50">
+          <h3 className="text-xl font-bold text-slate-800">{title}</h3>
           <button 
             onClick={onClose} 
-            className="text-slate-400 hover:text-white transition-colors"
+            className="text-slate-500 hover:text-slate-800 transition-colors"
             aria-label="關閉"
           >
             <X size={24} />

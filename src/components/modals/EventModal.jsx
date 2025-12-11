@@ -26,43 +26,43 @@ const EventModal = ({
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs text-slate-400">日期</label>
+            <label className="text-xs text-slate-700 font-medium">日期</label>
             <input 
               type="date" 
               value={event.date} 
               onChange={e => onChange({ ...event, date: e.target.value })} 
-              className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white" 
+              className="w-full bg-white border border-blue-200 rounded p-2 text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
             />
           </div>
           <div>
-            <label className="text-xs text-slate-400">時間</label>
+            <label className="text-xs text-slate-700 font-medium">時間</label>
             <input 
               type="time" 
               value={event.time} 
               onChange={e => onChange({ ...event, time: e.target.value })} 
-              className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white" 
+              className="w-full bg-white border border-blue-200 rounded p-2 text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
             />
           </div>
         </div>
         
         <div>
-          <label className="text-xs text-slate-400">標題</label>
+          <label className="text-xs text-slate-700 font-medium">標題</label>
           <input 
             type="text" 
             value={event.title} 
             onChange={e => onChange({ ...event, title: e.target.value })} 
-            className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white" 
+            className="w-full bg-white border border-blue-200 rounded p-2 text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
             placeholder="活動名稱" 
           />
         </div>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs text-slate-400">類型</label>
+            <label className="text-xs text-slate-700 font-medium">類型</label>
             <select 
               value={event.type} 
               onChange={e => onChange({ ...event, type: e.target.value })} 
-              className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"
+              className="w-full bg-white border border-blue-200 rounded p-2 text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="activity">活動</option>
               <option value="food">餐飲</option>
@@ -71,23 +71,23 @@ const EventModal = ({
             </select>
           </div>
           <div>
-            <label className="text-xs text-slate-400">地點</label>
+            <label className="text-xs text-slate-700 font-medium">地點</label>
             <input 
               type="text" 
               value={event.location} 
               onChange={e => onChange({ ...event, location: e.target.value })} 
-              className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white" 
+              className="w-full bg-white border border-blue-200 rounded p-2 text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
             />
           </div>
         </div>
         
         <div>
-          <label className="text-xs text-slate-400">備註</label>
+          <label className="text-xs text-slate-700 font-medium">備註</label>
           <textarea 
             rows="3" 
             value={event.notes} 
             onChange={e => onChange({ ...event, notes: e.target.value })} 
-            className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white" 
+            className="w-full bg-white border border-blue-200 rounded p-2 text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
           />
         </div>
         

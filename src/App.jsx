@@ -102,10 +102,10 @@ function App() {
   // Loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center text-blue-400">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center text-blue-600">
         <div className="text-center">
-          <div className="text-xl mb-2">❄️</div>
-          <div>載入中...</div>
+          <div className="text-5xl mb-2 animate-bounce">❄️</div>
+          <div className="font-medium">載入中...</div>
         </div>
       </div>
     );
@@ -124,17 +124,17 @@ function App() {
   // Show loading for data after user is authenticated
   if (itineraryLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center text-blue-400">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center text-blue-600">
         <div className="text-center">
-          <div className="text-xl mb-2">❄️</div>
-          <div>載入資料中...</div>
+          <div className="text-5xl mb-2 animate-bounce">❄️</div>
+          <div className="font-medium">載入資料中...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans pb-20 relative selection:bg-blue-500/30">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 text-slate-800 font-sans pb-20 relative selection:bg-blue-200/50">
       <Snowfall />
 
       <Header 
@@ -144,7 +144,7 @@ function App() {
         onSignOut={signOut}
       />
 
-      <main className="pt-20 px-4 max-w-3xl mx-auto h-full min-h-screen box-border relative z-10">
+      <main className="pt-20 px-4 max-w-3xl mx-auto h-full min-h-screen box-border relative z-10 backdrop-blur-sm">
         {activeTab === 'dashboard' && (
           <Dashboard 
             itinerary={itinerary} 

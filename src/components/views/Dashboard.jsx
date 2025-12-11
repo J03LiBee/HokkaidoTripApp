@@ -32,7 +32,7 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
   return (
     <div className="space-y-6 pb-20">
       {/* Hero Card */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 to-blue-900 p-6 shadow-xl border border-blue-400/30">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500 to-blue-700 p-6 shadow-xl border border-blue-300">
         <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
         <div className="relative z-10">
           <h2 className="text-blue-100 text-sm font-medium mb-1">距離出發還有</h2>
@@ -51,7 +51,7 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
       <div className="grid grid-cols-2 gap-4">
         <div 
           onClick={() => onNavigate('budget')}
-          className="bg-slate-800/60 backdrop-blur border border-white/5 p-4 rounded-2xl cursor-pointer hover:bg-slate-800 transition active:scale-95"
+          className="bg-white/80 backdrop-blur border border-blue-200 p-4 rounded-2xl cursor-pointer hover:bg-white transition active:scale-95 shadow-md"
         >
           <div className="flex justify-between items-start mb-2">
             <div className="p-2 bg-green-500/20 text-green-400 rounded-lg">
@@ -59,13 +59,13 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
             </div>
             <ArrowRight size={16} className="text-slate-500" />
           </div>
-          <div className="text-slate-400 text-xs">總預算支出</div>
-          <div className="text-xl font-bold text-white">${totalSpent.toLocaleString()}</div>
+          <div className="text-slate-600 text-xs">總預算支出</div>
+          <div className="text-xl font-bold text-slate-800">${totalSpent.toLocaleString()}</div>
         </div>
 
         <div 
           onClick={() => onNavigate('checklist')}
-          className="bg-slate-800/60 backdrop-blur border border-white/5 p-4 rounded-2xl cursor-pointer hover:bg-slate-800 transition active:scale-95"
+          className="bg-white/80 backdrop-blur border border-blue-200 p-4 rounded-2xl cursor-pointer hover:bg-white transition active:scale-95 shadow-md"
         >
           <div className="flex justify-between items-start mb-2">
             <div className="p-2 bg-purple-500/20 text-purple-400 rounded-lg">
@@ -73,9 +73,9 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
             </div>
             <ArrowRight size={16} className="text-slate-500" />
           </div>
-          <div className="text-slate-400 text-xs">行李準備</div>
-          <div className="text-xl font-bold text-white">{Math.round(progress)}%</div>
-          <div className="w-full h-1 bg-slate-700 rounded-full mt-2 overflow-hidden">
+          <div className="text-slate-600 text-xs">行李準備</div>
+          <div className="text-xl font-bold text-slate-800">{Math.round(progress)}%</div>
+          <div className="w-full h-1 bg-blue-100 rounded-full mt-2 overflow-hidden">
             <div 
               className="h-full bg-purple-500 transition-all duration-500" 
               style={{ width: `${progress}%` }}
@@ -86,8 +86,8 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
 
       {/* Next Event Card */}
       {nextEvent && (
-        <div className="bg-slate-800/80 backdrop-blur border border-white/10 rounded-2xl p-5 shadow-lg">
-          <h3 className="text-slate-400 text-xs uppercase tracking-wider mb-3 font-semibold">
+        <div className="bg-white/80 backdrop-blur border border-blue-200 rounded-2xl p-5 shadow-lg">
+          <h3 className="text-slate-600 text-xs uppercase tracking-wider mb-3 font-semibold">
             Upcoming • {nextEvent.date}
           </h3>
           <div className="flex gap-4 items-center">
@@ -100,10 +100,10 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
               </div>
             </div>
             <div>
-              <h4 className="text-lg font-bold text-white leading-tight">
+              <h4 className="text-lg font-bold text-slate-800 leading-tight">
                 {nextEvent.title}
               </h4>
-              <div className="text-slate-400 text-sm flex items-center gap-1 mt-1">
+              <div className="text-slate-600 text-sm flex items-center gap-1 mt-1">
                 <MapPin size={12} /> {nextEvent.location || '未定地點'}
               </div>
             </div>
@@ -112,8 +112,8 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
       )}
 
       {/* Flight Info Mini */}
-      <div className="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 rounded-2xl p-5">
-        <div className="flex justify-between items-center text-white mb-2">
+      <div className="bg-gradient-to-r from-blue-100 to-blue-50 border border-blue-200 rounded-2xl p-5 shadow-md">
+        <div className="flex justify-between items-center text-slate-800 mb-2">
           <div className="flex items-center gap-2">
             <Plane size={16} className="text-blue-400" />
             <span className="text-sm font-semibold">HKG -&gt; CTS</span>
@@ -122,7 +122,7 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
             Dec 31
           </span>
         </div>
-        <div className="flex justify-between text-xs text-slate-400">
+        <div className="flex justify-between text-xs text-slate-600">
           <span>09:15 出發</span>
           <span>14:15 抵達</span>
         </div>

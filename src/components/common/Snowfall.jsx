@@ -11,10 +11,10 @@ const Snowfall = () => {
       className="fixed inset-0 pointer-events-none z-0 overflow-hidden" 
       aria-hidden="true"
     >
-      {[...Array(15)].map((_, i) => (
+      {[...Array(25)].map((_, i) => (
         <div
           key={i}
-          className="absolute bg-white rounded-full opacity-40 animate-fall"
+          className="absolute bg-gradient-to-br from-blue-500 to-blue-700 rounded-full opacity-70 animate-fall shadow-md"
           style={{
             left: `${Math.random() * 100}%`,
             top: `-${Math.random() * 20}%`,

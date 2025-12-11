@@ -17,23 +17,23 @@ const ChecklistView = ({ checklist, onToggleCheck }) => {
         return (
           <div 
             key={cat} 
-            className="bg-slate-800/50 backdrop-blur rounded-xl border border-white/5 overflow-hidden"
+            className="bg-white/80 backdrop-blur rounded-xl border border-blue-200 overflow-hidden shadow-md"
           >
-            <div className="bg-slate-800 px-4 py-2 font-bold text-blue-200 text-sm">
+            <div className="bg-blue-50 px-4 py-2 font-bold text-blue-700 text-sm border-b border-blue-200">
               {cat}
             </div>
-            <div className="divide-y divide-white/5">
+            <div className="divide-y divide-blue-100">
               {items.map(item => (
                 <div 
                   key={item.id} 
                   onClick={() => onToggleCheck(item)} 
-                  className="p-4 flex gap-3 items-center hover:bg-white/5 cursor-pointer transition-colors"
+                  className="p-4 flex gap-3 items-center hover:bg-blue-50 cursor-pointer transition-colors"
                 >
                   <div 
                     className={`w-5 h-5 rounded border flex items-center justify-center ${
                       item.checked 
-                        ? 'bg-blue-500 border-blue-500' 
-                        : 'border-slate-500'
+                        ? 'bg-blue-500 border-blue-500 text-white' 
+                        : 'border-slate-400'
                     }`}
                   >
                     {item.checked && <X size={14} />}
@@ -41,8 +41,8 @@ const ChecklistView = ({ checklist, onToggleCheck }) => {
                   <span 
                     className={
                       item.checked 
-                        ? 'line-through text-slate-500' 
-                        : 'text-slate-200'
+                        ? 'line-through text-slate-400' 
+                        : 'text-slate-700'
                     }
                   >
                     {item.text}
