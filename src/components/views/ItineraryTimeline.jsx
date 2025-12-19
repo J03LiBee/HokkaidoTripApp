@@ -7,6 +7,7 @@ import React from 'react';
 import { MapPin } from 'lucide-react';
 import GlassCard from '@components/common/GlassCard';
 import { sortItineraryByDateTime } from '@utils/dateHelpers';
+import { TRIP_DATES } from '@constants/initialData';
 
 const ItineraryTimeline = ({ itinerary, onEventClick }) => {
   const sortedItinerary = sortItineraryByDateTime(itinerary);
@@ -32,15 +33,15 @@ const ItineraryTimeline = ({ itinerary, onEventClick }) => {
   // Date selection state
   const [selectedDate, setSelectedDate] = React.useState(null);
   
-  // Get unique dates
-  const uniqueDates = [...new Set(sortedItinerary.map(item => item.date))].sort();
+  // Use all trip dates (9 days), not just dates with itinerary
+  const uniqueDates = TRIP_DATES;
   
   // Set initial selected date
   React.useEffect(() => {
-    if (uniqueDates.length > 0 && !selectedDate) {
-      setSelectedDate(uniqueDates[0]);
+    if (!selectedDate) {
+      setSelectedDate(TRIP_DATES[0]);
     }
-  }, [uniqueDates.length]);
+  }, []);
   
   // Filter itinerary by selected date
   const filteredItinerary = selectedDate 
@@ -141,7 +142,7 @@ const ItineraryTimeline = ({ itinerary, onEventClick }) => {
       {filteredItinerary.length === 0 && (
         <GlassCard className="py-12 text-center">
           <div className="text-5xl mb-3">📅</div>
-          <p className="text-slate-600 font-serif text-lg">還沒有行程</p>
+          <p className="text-slate-600 font-serif text-lg">這天還沒有行程</p>
           <p className="text-sm text-slate-500 mt-1">點擊右上角 + 按鈕新增</p>
         </GlassCard>
       )}
