@@ -27,25 +27,27 @@ const EventModal = ({
       onClose={onClose} 
       title={isEditing ? '編輯行程' : '新增行程'}
     >
-      <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-        <div className="grid grid-cols-2 gap-2">
-          <div className="min-w-0">
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto overflow-x-hidden">
+        <div className="grid grid-cols-2 gap-2 w-full">
+          <div className="min-w-0 max-w-full overflow-hidden">
             <label className="text-xs text-slate-700 font-medium block mb-1">日期</label>
             <input 
               type="date" 
               value={event.date} 
               onChange={e => onChange({ ...event, date: e.target.value })} 
-              className="w-full bg-white/80 border border-slate-200 rounded-lg px-1.5 py-1.5 text-xs text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" 
+              className="w-full max-w-full bg-white/80 border border-slate-200 rounded-lg px-1 py-1.5 text-xs text-slate-800 focus:ring-1 focus:ring-purple-300 focus:border-purple-300 transition-all"
+              style={{ fontSize: '12px' }}
             />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 max-w-full overflow-hidden">
             <label className="text-xs text-slate-700 font-medium block mb-1">時間</label>
             <input 
               type="time" 
               value={event.time} 
               onChange={e => onChange({ ...event, time: e.target.value })} 
               step="900"
-              className="w-full bg-white/80 border border-slate-200 rounded-lg px-1.5 py-1.5 text-xs text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" 
+              className="w-full max-w-full bg-white/80 border border-slate-200 rounded-lg px-1 py-1.5 text-xs text-slate-800 focus:ring-1 focus:ring-purple-300 focus:border-purple-300 transition-all"
+              style={{ fontSize: '12px' }}
             />
           </div>
         </div>
@@ -61,13 +63,14 @@ const EventModal = ({
           />
         </div>
         
-        <div className="grid grid-cols-2 gap-2">
-          <div className="min-w-0">
+        <div className="grid grid-cols-2 gap-2 w-full">
+          <div className="min-w-0 max-w-full overflow-hidden">
             <label className="text-xs text-slate-700 font-medium block mb-1">類型</label>
             <select 
               value={event.type} 
               onChange={e => onChange({ ...event, type: e.target.value })} 
-              className="w-full bg-white/80 border border-slate-200 rounded-lg px-1.5 py-1.5 text-xs text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all"
+              className="w-full max-w-full bg-white/80 border border-slate-200 rounded-lg px-1 py-1.5 text-xs text-slate-800 focus:ring-1 focus:ring-purple-300 focus:border-purple-300 transition-all"
+              style={{ fontSize: '12px' }}
             >
               <option value="activity">活動</option>
               <option value="food">餐飲</option>
@@ -75,14 +78,15 @@ const EventModal = ({
               <option value="stay">住宿</option>
             </select>
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 max-w-full overflow-hidden">
             <label className="text-xs text-slate-700 font-medium block mb-1">地點</label>
             <input 
               type="text" 
               value={event.location} 
               onChange={e => onChange({ ...event, location: e.target.value })} 
-              className="w-full bg-white/80 border border-slate-200 rounded-lg px-2 py-1.5 text-sm text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" 
+              className="w-full max-w-full bg-white/80 border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-800 focus:ring-1 focus:ring-purple-300 focus:border-purple-300 transition-all" 
               placeholder="地點"
+              style={{ fontSize: '12px' }}
             />
           </div>
         </div>

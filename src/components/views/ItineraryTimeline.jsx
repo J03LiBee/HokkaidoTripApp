@@ -9,7 +9,7 @@ import GlassCard from '@components/common/GlassCard';
 import { sortItineraryByDateTime } from '@utils/dateHelpers';
 import { TRIP_DATES } from '@constants/initialData';
 
-const ItineraryTimeline = ({ itinerary, onEventClick }) => {
+const ItineraryTimeline = ({ itinerary, onEventClick, onDateChange }) => {
   const sortedItinerary = sortItineraryByDateTime(itinerary);
 
   const getTypeColor = (type) => {
@@ -40,8 +40,15 @@ const ItineraryTimeline = ({ itinerary, onEventClick }) => {
   React.useEffect(() => {
     if (!selectedDate) {
       setSelectedDate(TRIP_DATES[0]);
+      if (onDateChange) onDateChange(TRIP_DATES[0]);
     }
   }, []);
+  
+  // Notify parent when date changes
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    if (onDateChange) onDateChange(date);
+  };
   
   // Filter itinerary by selected date
   const filteredItinerary = selectedDate 
@@ -63,7 +70,7 @@ const ItineraryTimeline = ({ itinerary, onEventClick }) => {
           return (
             <button 
               key={date}
-              onClick={() => setSelectedDate(date)}
+              onClick={() => handleDateSelect(date)}
               className={`flex flex-col items-center justify-center min-w-[4rem] h-20 rounded-2xl border transition-all duration-300 ${
                 isSelected 
                   ? 'bg-slate-700 text-white border-slate-700 shadow-lg scale-105' 

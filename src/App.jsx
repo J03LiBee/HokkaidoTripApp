@@ -33,6 +33,9 @@ function App() {
   const { user, isLoading: authLoading, signInWithGoogle, signInAnonymous, signOut, isAnonymous } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   
+  // Track currently selected date in itinerary view
+  const [selectedItineraryDate, setSelectedItineraryDate] = useState('2025-12-31');
+  
   // Modal States
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isEventDetailModalOpen, setIsEventDetailModalOpen] = useState(false);
@@ -82,17 +85,20 @@ function App() {
     }
   };
 
-  const handleAddNewEvent = (date = '2025-12-31', time = '12:00') => {
+  const handleAddNewEvent = (date, time = '12:00') => {
     // Guest cannot add - 訪客不能新增
     if (isAnonymous) {
       alert('訪客模式無法新增行程，請使用 Google 登入');
       return;
     }
     
+    // Use selected itinerary date if no date provided
+    const eventDate = date || selectedItineraryDate;
+    
     // Add new event
     setEditingEvent(null);
     setNewEvent({ 
-      date, 
+      date: eventDate, 
       time, 
       title: '', 
       location: '', 
@@ -291,7 +297,7 @@ function App() {
 
       <Header 
         activeTab={activeTab} 
-        onAddEvent={() => handleAddNewEvent()}
+        onAddEvent={() => handleAddNewEvent(selectedItineraryDate)}
         user={user}
         onSignOut={signOut}
       />
@@ -310,7 +316,8 @@ function App() {
         {activeTab === 'itinerary' && (
           <ItineraryTimeline 
             itinerary={itinerary} 
-            onEventClick={handleEventClick} 
+            onEventClick={handleEventClick}
+            onDateChange={setSelectedItineraryDate}
           />
         )}
 
