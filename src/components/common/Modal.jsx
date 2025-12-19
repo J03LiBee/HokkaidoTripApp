@@ -52,23 +52,23 @@ const Modal = ({ isOpen, onClose, title, children }) => {
       />
       
       {/* Modal Content */}
-      <div className="absolute inset-0 flex items-center justify-center p-4">
+      <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-4">
         <div 
           className="bg-white/95 backdrop-blur-xl border border-white/60 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-scaleIn relative"
           onClick={(e) => e.stopPropagation()}
-          style={{ zIndex: 100000 }}
+          style={{ zIndex: 100000, maxWidth: 'calc(100vw - 24px)' }}
         >
-          <div className="flex justify-between items-center p-5 border-b border-slate-200">
-            <h3 className="text-xl font-serif text-slate-800">{title}</h3>
+          <div className="flex justify-between items-center p-4 sm:p-5 border-b border-slate-200">
+            <h3 className="text-lg sm:text-xl font-serif text-slate-800">{title}</h3>
             <button 
               onClick={onClose} 
-              className="text-slate-500 hover:text-slate-800 transition-colors"
+              className="text-slate-500 hover:text-slate-800 transition-colors ml-2"
               aria-label="關閉"
             >
-              <X size={24} />
+              <X size={20} />
             </button>
           </div>
-          <div className="p-4 max-h-[70vh] overflow-y-auto">
+          <div className="p-3 sm:p-4 max-h-[70vh] overflow-y-auto">
             {children}
           </div>
         </div>
