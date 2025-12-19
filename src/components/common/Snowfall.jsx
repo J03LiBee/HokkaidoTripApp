@@ -14,7 +14,7 @@ const Snowfall = () => {
       {[...Array(25)].map((_, i) => (
         <div
           key={i}
-          className="absolute bg-gradient-to-br from-blue-500 to-blue-700 rounded-full opacity-70 animate-fall shadow-md"
+          className="absolute bg-gradient-to-br from-lavender-400 to-lavender-600 rounded-full opacity-70 animate-fall shadow-md"
           style={{
             left: `${Math.random() * 100}%`,
             top: `-${Math.random() * 20}%`,

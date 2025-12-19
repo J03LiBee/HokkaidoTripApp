@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Shared Trip Data (All authenticated users can read and write)
+    match /trips/{tripId} {
+      // Allow all authenticated users to read and write shared trip data
+      allow read, write: if isAuthenticated();
+      
+      // Shared Itinerary
+      match /itinerary/{itemId} {
+        allow read, write: if isAuthenticated();
+      }
+      
+      // Shared Expenses
+      match /expenses/{expenseId} {
+        allow read, write: if isAuthenticated();
+      }
+      
+      // Shared Budget
+      match /budget/{budgetId} {
+        allow read, write: if isAuthenticated();
+      }
+    }
+    
+    // User-specific data (Only the owner can access)
+    match /artifacts/{appId}/users/{userId} {
+      // Only the owner can read and write their own data
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      
+      // User-specific checklist
+      match /checklist/{itemId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+      
+      // Legacy user-specific collections (keeping for backward compatibility)
+      match /itinerary/{itemId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+      
+      match /budget/{itemId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+      
+      match /expenses/{itemId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+    }
+  }
+}
+
+

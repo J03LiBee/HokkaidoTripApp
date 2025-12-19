@@ -6,18 +6,27 @@
 import React, { useState } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import { useFirestoreCollection } from '@hooks/useFirestoreCollection';
-import { updateDocument, deleteDocument, addDocument } from '@services/firestore';
-import { INITIAL_ITINERARY, INITIAL_CHECKLIST, INITIAL_BUDGET } from '@constants/initialData';
+import useSharedCollection from '@hooks/useSharedCollection';
+import { 
+  updateDocument, 
+  deleteDocument, 
+  addDocument,
+  updateSharedDocument,
+  deleteSharedDocument,
+  addSharedDocument
+} from '@services/firestore';
+import { INITIAL_ITINERARY, INITIAL_CHECKLIST, INITIAL_BUDGET, INITIAL_EXPENSES } from '@constants/initialData';
 
 // Components
-import Snowfall from '@components/common/Snowfall';
+import EnhancedSnowfall from '@components/common/EnhancedSnowfall';
 import Header from '@components/layout/Header';
 import BottomNav from '@components/layout/BottomNav';
 import Dashboard from '@components/views/Dashboard';
-import ItineraryTable from '@components/views/ItineraryTable';
+import ItineraryTimeline from '@components/views/ItineraryTimeline';
 import ChecklistView from '@components/views/ChecklistView';
-import BudgetView from '@components/views/BudgetView';
+import ExpenseTracker from '@components/views/ExpenseTracker';
 import EventModal from '@components/modals/EventModal';
+import EventDetailModal from '@components/modals/EventDetailModal';
 import LoginScreen from '@components/auth/LoginScreen';
 
 function App() {
@@ -26,41 +35,59 @@ function App() {
   
   // Modal States
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [isEventDetailModalOpen, setIsEventDetailModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [viewingEvent, setViewingEvent] = useState(null);
   const [newEvent, setNewEvent] = useState({
     date: '2025-12-31',
     time: '12:00',
     title: '',
     location: '',
     type: 'activity',
-    notes: ''
+    notes: '',
+    mapLink: '',
+    imageUrl: ''
   });
 
   // Data from Firestore
-  const { data: itinerary, isLoading: itineraryLoading } = useFirestoreCollection(
-    user, 
-    'itinerary', 
-    INITIAL_ITINERARY
-  );
+  // SHARED DATA (all users can see and edit)
+  const { data: itinerary, loading: itineraryLoading } = useSharedCollection('itinerary', INITIAL_ITINERARY);
+  const { data: expenses } = useSharedCollection('expenses', INITIAL_EXPENSES);
+  const { data: budget } = useSharedCollection('budget', INITIAL_BUDGET);
+  
+  // USER-SPECIFIC DATA (only this user can see)
   const { data: checklist } = useFirestoreCollection(user, 'checklist', INITIAL_CHECKLIST);
-  const { data: budget } = useFirestoreCollection(user, 'budget', INITIAL_BUDGET);
 
   // Handlers
-  const handleSlotClick = (date, time, existingEvent) => {
-    if (existingEvent) {
-      setEditingEvent(existingEvent);
-      setNewEvent({ ...existingEvent });
-    } else {
-      setEditingEvent(null);
-      setNewEvent({ 
-        date, 
-        time, 
-        title: '', 
-        location: '', 
-        type: 'activity', 
-        notes: '' 
-      });
+  const handleEventClick = (event) => {
+    // Click on existing event -> show preview modal
+    setViewingEvent(event);
+    setIsEventDetailModalOpen(true);
+  };
+
+  const handleEditEvent = () => {
+    // From preview modal, switch to edit mode
+    if (viewingEvent) {
+      setEditingEvent(viewingEvent);
+      setNewEvent({ ...viewingEvent });
+      setIsEventDetailModalOpen(false);
+      setIsEventModalOpen(true);
     }
+  };
+
+  const handleAddNewEvent = (date = '2025-12-31', time = '12:00') => {
+    // Add new event
+    setEditingEvent(null);
+    setNewEvent({ 
+      date, 
+      time, 
+      title: '', 
+      location: '', 
+      type: 'activity', 
+      notes: '',
+      mapLink: '',
+      imageUrl: ''
+    });
     setIsEventModalOpen(true);
   };
 
@@ -68,11 +95,14 @@ function App() {
     if (!user) return;
     try {
       if (editingEvent) {
-        await updateDocument(user.uid, 'itinerary', editingEvent.id, newEvent);
+        // Update shared itinerary
+        await updateSharedDocument('itinerary', editingEvent.id, newEvent);
       } else {
-        await addDocument(user.uid, 'itinerary', newEvent);
+        // Add to shared itinerary
+        await addSharedDocument('itinerary', newEvent);
       }
       setIsEventModalOpen(false);
+      setEditingEvent(null);
     } catch (e) { 
       console.error('Failed to save event:', e); 
     }
@@ -81,8 +111,10 @@ function App() {
   const handleDeleteEvent = async () => {
     if (!user || !editingEvent || !window.confirm('確定要刪除此行程？')) return;
     try {
-      await deleteDocument(user.uid, 'itinerary', editingEvent.id);
+      // Delete from shared itinerary
+      await deleteSharedDocument('itinerary', editingEvent.id);
       setIsEventModalOpen(false);
+      setEditingEvent(null);
     } catch (e) { 
       console.error('Failed to delete event:', e); 
     }
@@ -99,13 +131,43 @@ function App() {
     }
   };
 
+  const handleAddExpense = async (expenseData) => {
+    if (!user) return;
+    try {
+      // Add to shared expenses
+      await addSharedDocument('expenses', expenseData);
+    } catch (e) {
+      console.error('Failed to add expense:', e);
+    }
+  };
+
+  const handleUpdateExpense = async (expenseId, expenseData) => {
+    if (!user) return;
+    try {
+      // Update shared expense
+      await updateSharedDocument('expenses', expenseId, expenseData);
+    } catch (e) {
+      console.error('Failed to update expense:', e);
+    }
+  };
+
+  const handleDeleteExpense = async (expenseId) => {
+    if (!user || !window.confirm('確定要刪除此支出？')) return;
+    try {
+      // Delete from shared expenses
+      await deleteSharedDocument('expenses', expenseId);
+    } catch (e) {
+      console.error('Failed to delete expense:', e);
+    }
+  };
+
   // Loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center text-blue-600">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 flex items-center justify-center text-slate-600">
         <div className="text-center">
-          <div className="text-5xl mb-2 animate-bounce">❄️</div>
-          <div className="font-medium">載入中...</div>
+          <div className="text-5xl mb-3 animate-bounce">❄️</div>
+          <div className="font-serif text-xl text-slate-700">Loading...</div>
         </div>
       </div>
     );
@@ -124,27 +186,37 @@ function App() {
   // Show loading for data after user is authenticated
   if (itineraryLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center text-blue-600">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 flex items-center justify-center text-slate-600">
         <div className="text-center">
-          <div className="text-5xl mb-2 animate-bounce">❄️</div>
-          <div className="font-medium">載入資料中...</div>
+          <div className="text-5xl mb-3 animate-bounce">❄️</div>
+          <div className="font-serif text-xl text-slate-700">載入資料中...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 text-slate-800 font-sans pb-20 relative selection:bg-blue-200/50">
-      <Snowfall />
+    <div className="relative min-h-screen bg-slate-100 font-sans text-slate-800 overflow-hidden">
+      {/* Dynamic Backgrounds */}
+      <div className="fixed inset-0 z-0">
+        {/* Main Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200"></div>
+        {/* Subtle Orbs for "Northern Lights" feel */}
+        <div className="absolute top-0 left-0 w-full h-2/3 bg-gradient-to-b from-purple-100/30 to-transparent mix-blend-overlay"></div>
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-[20%] left-[-10%] w-[400px] h-[400px] bg-teal-100/20 rounded-full blur-3xl"></div>
+      </div>
+
+      <EnhancedSnowfall />
 
       <Header 
         activeTab={activeTab} 
-        onAddEvent={() => handleSlotClick('2025-12-31', '12:00', null)}
+        onAddEvent={() => handleAddNewEvent()}
         user={user}
         onSignOut={signOut}
       />
 
-      <main className="pt-20 px-4 max-w-3xl mx-auto h-full min-h-screen box-border relative z-10 backdrop-blur-sm">
+      <main className="relative z-10 max-w-md mx-auto min-h-screen p-6 pt-20">
         {activeTab === 'dashboard' && (
           <Dashboard 
             itinerary={itinerary} 
@@ -155,9 +227,9 @@ function App() {
         )}
 
         {activeTab === 'itinerary' && (
-          <ItineraryTable 
+          <ItineraryTimeline 
             itinerary={itinerary} 
-            onEditSlot={handleSlotClick} 
+            onEventClick={handleEventClick} 
           />
         )}
 
@@ -168,8 +240,14 @@ function App() {
           />
         )}
 
-        {activeTab === 'budget' && (
-          <BudgetView budget={budget} />
+        {activeTab === 'expenses' && (
+          <ExpenseTracker 
+            expenses={expenses}
+            onAddExpense={handleAddExpense}
+            onUpdateExpense={handleUpdateExpense}
+            onDeleteExpense={handleDeleteExpense}
+            itinerary={itinerary}
+          />
         )}
       </main>
 
@@ -178,9 +256,22 @@ function App() {
         onTabChange={setActiveTab} 
       />
 
+      <EventDetailModal
+        isOpen={isEventDetailModalOpen}
+        onClose={() => {
+          setIsEventDetailModalOpen(false);
+          setViewingEvent(null);
+        }}
+        event={viewingEvent}
+        onEdit={handleEditEvent}
+      />
+
       <EventModal 
         isOpen={isEventModalOpen}
-        onClose={() => setIsEventModalOpen(false)}
+        onClose={() => {
+          setIsEventModalOpen(false);
+          setEditingEvent(null);
+        }}
         event={newEvent}
         isEditing={!!editingEvent}
         onSave={handleSaveEvent}

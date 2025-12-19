@@ -1,48 +1,48 @@
 /**
  * Budget View Component
- * Displays trip budget and expenses
+ * Clean budget display matching mainSample.jsx aesthetic
  */
 
 import React from 'react';
 import { getStatusColor } from '@utils/styleHelpers';
+import GlassCard from '@components/common/GlassCard';
 
 const BudgetView = ({ budget }) => {
+  const totalAmount = budget.reduce((sum, b) => sum + Number(b.amount || 0), 0);
+
   return (
-    <div className="space-y-4 pb-20">
-      <div className="bg-white/80 backdrop-blur rounded-xl border border-blue-200 overflow-hidden shadow-md">
-        <table className="w-full text-sm">
-          <thead className="bg-blue-50 text-slate-700 border-b border-blue-200">
-            <tr>
-              <th className="p-3 text-left">項目</th>
-              <th className="p-3 text-right">金額</th>
-              <th className="p-3 text-center">狀態</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-blue-100">
-            {budget.map(b => (
-              <tr key={b.id} className="hover:bg-blue-50 transition-colors">
-                <td className="p-3">
-                  <div className="text-slate-800 font-medium">{b.item}</div>
-                  <div className="text-xs text-slate-600">{b.payer}</div>
-                </td>
-                <td className="p-3 text-right font-mono text-slate-700 font-semibold">
-                  ${b.amount}
-                </td>
-                <td className="p-3 text-center">
-                  <span 
-                    className={`text-[10px] px-2 py-0.5 rounded border ${getStatusColor(b.status)}`}
-                  >
-                    {b.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="space-y-6 pb-24 animate-fade-in">
+      <h1 className="text-3xl font-serif text-slate-800">旅程預算</h1>
+
+      {/* Total Summary */}
+      <GlassCard className="text-center py-6">
+        <p className="text-sm text-slate-500 uppercase tracking-wider mb-2">Total Budget</p>
+        <p className="text-4xl font-serif text-slate-800">${totalAmount.toLocaleString()}</p>
+      </GlassCard>
+
+      {/* Budget Items */}
+      <div className="space-y-3">
+        {budget.map(b => (
+          <GlassCard key={b.id} className="hover:bg-white/80 transition-colors">
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex-1">
+                <h3 className="font-medium text-slate-800">{b.item}</h3>
+                <p className="text-xs text-slate-500">{b.payer}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xl font-serif text-slate-800">${b.amount}</p>
+              </div>
+            </div>
+            <span className={`inline-block text-[10px] px-2 py-1 rounded border ${getStatusColor(b.status)}`}>
+              {b.status}
+            </span>
+          </GlassCard>
+        ))}
       </div>
     </div>
   );
 };
 
 export default BudgetView;
+
 

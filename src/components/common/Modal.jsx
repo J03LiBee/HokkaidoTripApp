@@ -10,9 +10,9 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white border border-blue-200 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-scaleIn">
-        <div className="flex justify-between items-center p-4 border-b border-blue-200 bg-blue-50">
-          <h3 className="text-xl font-bold text-slate-800">{title}</h3>
+      <div className="bg-white/95 backdrop-blur-xl border border-white/60 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-scaleIn">
+        <div className="flex justify-between items-center p-5 border-b border-slate-200">
+          <h3 className="text-xl font-serif text-slate-800">{title}</h3>
           <button 
             onClick={onClose} 
             className="text-slate-500 hover:text-slate-800 transition-colors"

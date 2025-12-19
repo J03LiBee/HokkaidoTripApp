@@ -4,47 +4,57 @@
  */
 
 import React from 'react';
-import { X } from 'lucide-react';
+import { Sparkles, Plus } from 'lucide-react';
 import { CHECKLIST_CATEGORIES } from '@constants/initialData';
+import GlassCard from '@components/common/GlassCard';
 
 const ChecklistView = ({ checklist, onToggleCheck }) => {
+  const totalItems = checklist.length;
+  const checkedItems = checklist.filter(i => i.checked).length;
+  const progress = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
+
   return (
-    <div className="space-y-4 pb-20">
+    <div className="space-y-6 pb-24 animate-fade-in">
+      
+      {/* Progress Bar */}
+      <div className="bg-white/40 rounded-full h-2 w-full overflow-hidden">
+        <div 
+          className="bg-gradient-to-r from-purple-300 to-indigo-300 h-full rounded-full transition-all duration-500" 
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
       {CHECKLIST_CATEGORIES.map(cat => {
         const items = checklist.filter(i => i.category === cat);
         if (!items.length) return null;
         
         return (
-          <div 
-            key={cat} 
-            className="bg-white/80 backdrop-blur rounded-xl border border-blue-200 overflow-hidden shadow-md"
-          >
-            <div className="bg-blue-50 px-4 py-2 font-bold text-blue-700 text-sm border-b border-blue-200">
+          <div key={cat} className="space-y-3">
+            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider pl-1">
               {cat}
-            </div>
-            <div className="divide-y divide-blue-100">
+            </h2>
+            <div className="space-y-2">
               {items.map(item => (
                 <div 
                   key={item.id} 
-                  onClick={() => onToggleCheck(item)} 
-                  className="p-4 flex gap-3 items-center hover:bg-blue-50 cursor-pointer transition-colors"
+                  onClick={() => onToggleCheck(item)}
+                  className={`group flex items-center gap-3 p-4 rounded-2xl border transition-all duration-300 cursor-pointer ${
+                    item.checked 
+                      ? 'bg-slate-50/30 border-transparent opacity-60' 
+                      : 'bg-white/60 border-white/60 shadow-sm backdrop-blur-sm hover:bg-white/80'
+                  }`}
                 >
-                  <div 
-                    className={`w-5 h-5 rounded border flex items-center justify-center ${
-                      item.checked 
-                        ? 'bg-blue-500 border-blue-500 text-white' 
-                        : 'border-slate-400'
-                    }`}
-                  >
-                    {item.checked && <X size={14} />}
+                  <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-colors ${
+                    item.checked 
+                      ? 'bg-slate-400 border-slate-400' 
+                      : 'border-slate-300 group-hover:border-purple-300'
+                  }`}>
+                    {item.checked && <Sparkles size={12} className="text-white" />}
                   </div>
-                  <span 
-                    className={
-                      item.checked 
-                        ? 'line-through text-slate-400' 
-                        : 'text-slate-700'
-                    }
-                  >
+                  <span className={`font-medium ${
+                    item.checked 
+                      ? 'text-slate-400 line-through decoration-slate-300' 
+                      : 'text-slate-700'
+                  }`}>
                     {item.text}
                   </span>
                 </div>
@@ -53,6 +63,11 @@ const ChecklistView = ({ checklist, onToggleCheck }) => {
           </div>
         );
       })}
+
+      {/* Add New Item Button */}
+      <button className="w-full py-4 rounded-2xl border-2 border-dashed border-slate-300 text-slate-400 font-medium hover:border-slate-400 hover:text-slate-500 transition-colors flex items-center justify-center gap-2">
+        <Plus size={18} /> 新增項目
+      </button>
     </div>
   );
 };

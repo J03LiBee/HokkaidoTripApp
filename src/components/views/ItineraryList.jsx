@@ -46,14 +46,14 @@ const ItineraryList = ({ itinerary, onEditEvent }) => {
       {sortedDates.map(date => (
         <div key={date} className="space-y-3">
           {/* Date Header */}
-          <div className="sticky top-20 z-10 bg-white/95 backdrop-blur-sm border-b border-blue-200 pb-2 pt-2 shadow-sm">
+          <div className="sticky top-20 z-10 bg-white/95 backdrop-blur-sm border-b border-lavender-200 pb-2 pt-2 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-12 h-12 bg-blue-600 rounded-xl">
+              <div className="flex items-center justify-center w-12 h-12 bg-lavender-500 rounded-xl">
                 <div className="text-center">
                   <div className="text-lg font-bold text-white leading-none">
                     {new Date(date).getDate()}
                   </div>
-                  <div className="text-[10px] text-blue-200 leading-none mt-0.5">
+                  <div className="text-[10px] text-lavender-100 leading-none mt-0.5">
                     {new Date(date).getMonth() + 1}月
                   </div>
                 </div>
