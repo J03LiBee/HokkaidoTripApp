@@ -199,7 +199,7 @@ const HomeView = () => {
           <div className="flex gap-4 mt-4 text-xs text-slate-400 font-mono border-t border-slate-200/50 pt-3 w-full justify-center">
              <span>H: {MOCK_WEATHER.high}°</span>
              <span>L: {MOCK_WEATHER.low}°</span>
-             <span>Wind: 12km/h</span>
+             <span>Wind: 12m/s</span>
           </div>
         </div>
       </GlassCard>

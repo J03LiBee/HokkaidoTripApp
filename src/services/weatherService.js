@@ -1,90 +1,137 @@
 /**
- * Weather Service - Fetches weather data from OpenWeatherMap API
+ * Weather Service - Fetches weather data from MeteoSource API
+ * Free tier: 400 calls/day, no credit card required
+ * https://www.meteosource.com/
  */
 
-const API_KEY = ''; // Will use env variable in production
-const CITY = 'Sapporo,JP';
-const BASE_URL = 'https://api.openweathermap.org/data/2.5';
+// Sapporo coordinates
+const LATITUDE = 43.0642;
+const LONGITUDE = 141.3469;
+const SECTIONS = 'daily'; // daily forecast
+const TIMEZONE = 'Asia/Tokyo';
+const UNITS = 'metric';
 
 /**
- * Fetch 7-day weather forecast
- * Using the free tier forecast API (3-hour intervals for 5 days)
+ * Fetch 7-day weather forecast from MeteoSource
+ * Returns both processed data and raw API response
  */
 export const getWeatherForecast = async () => {
   try {
-    // For demo purposes, return mock data if no API key
-    if (!import.meta.env.VITE_OPENWEATHER_API_KEY) {
-      return getMockWeatherData();
+    // Check if API key is available
+    const apiKey = import.meta.env.VITE_METEOSOURCE_API_KEY;
+    
+    if (!apiKey) {
+      console.warn('No MeteoSource API key found, using mock data (99°C indicator)');
+      return { 
+        forecast: getMockWeatherData(),
+        rawData: null 
+      };
     }
 
-    const response = await fetch(
-      `${BASE_URL}/forecast?q=${CITY}&units=metric&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`
-    );
+    const url = `https://www.meteosource.com/api/v1/free/point?lat=${LATITUDE}&lon=${LONGITUDE}&sections=${SECTIONS}&timezone=${TIMEZONE}&language=en&units=${UNITS}&key=${apiKey}`;
+    
+    const response = await fetch(url);
     
     if (!response.ok) {
-      throw new Error('Failed to fetch weather data');
+      throw new Error(`API returned ${response.status}: ${response.statusText}`);
     }
     
     const data = await response.json();
-    return processForecastData(data);
+    return {
+      forecast: processMeteoSourceData(data),
+      rawData: data // Keep raw API response for detailed view
+    };
   } catch (error) {
     console.error('Weather fetch error:', error);
-    return getMockWeatherData();
+    return {
+      forecast: getMockWeatherData(),
+      rawData: null
+    };
   }
 };
 
 /**
- * Process API data to get daily forecasts
+ * Process MeteoSource API data to get daily forecasts
  */
-const processForecastData = (data) => {
-  const dailyForecasts = [];
-  const processedDates = new Set();
+const processMeteoSourceData = (data) => {
+  if (!data.daily || !data.daily.data) {
+    throw new Error('Invalid API response format');
+  }
 
-  data.list.forEach(item => {
-    const date = new Date(item.dt * 1000);
-    const dateStr = date.toISOString().split('T')[0];
-
-    // Only take one forecast per day (around noon)
-    if (!processedDates.has(dateStr) && date.getHours() >= 11 && date.getHours() <= 14) {
-      processedDates.add(dateStr);
-      dailyForecasts.push({
-        date: dateStr,
-        temp: Math.round(item.main.temp),
-        temp_min: Math.round(item.main.temp_min),
-        temp_max: Math.round(item.main.temp_max),
-        condition: item.weather[0].main,
-        description: item.weather[0].description,
-        icon: item.weather[0].icon,
-        humidity: item.main.humidity,
-        windSpeed: Math.round(item.wind.speed * 3.6), // Convert m/s to km/h
-      });
+  return data.daily.data.slice(0, 7).map(day => {
+    // Map MeteoSource weather codes to conditions
+    const weatherCode = day.weather;
+    let condition = 'Clear';
+    
+    if (weatherCode.includes('snow') || weatherCode.includes('snow_shower')) {
+      condition = 'Snow';
+    } else if (weatherCode.includes('rain') || weatherCode.includes('psbl_rain') || weatherCode.includes('light_rain')) {
+      condition = 'Rain';
+    } else if (weatherCode.includes('cloud') || weatherCode.includes('cloudy') || weatherCode.includes('overcast')) {
+      condition = 'Clouds';
+    } else if (weatherCode.includes('thunder')) {
+      condition = 'Thunderstorm';
+    } else if (weatherCode.includes('fog') || weatherCode.includes('mist')) {
+      condition = 'Mist';
+    } else if (weatherCode.includes('sunny') || weatherCode.includes('partly_sunny') || weatherCode.includes('clear')) {
+      condition = 'Clear';
     }
-  });
 
-  return dailyForecasts.slice(0, 7);
+    // Wind speed: MeteoSource returns m/s, convert to km/h
+    const windSpeedMs = day.all_day.wind?.speed || 0;
+    const windSpeedKmh = Math.round(windSpeedMs * 3.6);
+
+    // Humidity: MeteoSource doesn't provide humidity in daily data
+    // Use cloud cover as a proxy, or estimate based on weather
+    // For now, estimate humidity based on weather type and cloud cover
+    let humidity = 70; // Default
+    const cloudCover = day.all_day.cloud_cover?.total || 0;
+    
+    if (condition === 'Rain' || condition === 'Snow') {
+      humidity = Math.min(95, 75 + Math.floor(cloudCover / 4)); // Higher humidity for precipitation
+    } else if (condition === 'Clouds') {
+      humidity = 60 + Math.floor(cloudCover / 3); // Moderate humidity for clouds
+    } else if (condition === 'Clear') {
+      humidity = 50 + Math.floor(cloudCover / 5); // Lower humidity for clear skies
+    }
+
+    return {
+      date: day.day,
+      temp: Math.round(day.all_day.temperature),
+      temp_min: Math.round(day.all_day.temperature_min),
+      temp_max: Math.round(day.all_day.temperature_max),
+      condition: condition,
+      description: day.summary || day.weather,
+      icon: '', // MeteoSource uses different icon system
+      humidity: Math.round(humidity),
+      windSpeed: windSpeedKmh,
+    };
+  });
 };
 
 /**
  * Mock weather data for demo/development
+ * Using 99°C as indicator that API is not connected
  */
 const getMockWeatherData = () => {
   const conditions = ['Snow', 'Clouds', 'Clear', 'Snow', 'Clouds', 'Snow', 'Clear'];
   const icons = ['13d', '03d', '01d', '13d', '04d', '13d', '02d'];
   
+  // Using 99°C to clearly show this is MOCK data (API not working)
   return Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() + i);
     
     return {
       date: date.toISOString().split('T')[0],
-      temp: Math.round(-5 + Math.random() * 5),
-      temp_min: Math.round(-10 + Math.random() * 5),
-      temp_max: Math.round(-2 + Math.random() * 5),
+      temp: 99,        // 🔥 Mock data indicator
+      temp_min: 99,
+      temp_max: 99,
       condition: conditions[i],
-      description: conditions[i].toLowerCase(),
+      description: 'DEMO DATA - API not configured',
       icon: icons[i],
-      humidity: Math.round(70 + Math.random() * 20),
-      windSpeed: Math.round(10 + Math.random() * 15),
+      humidity: 99,
+      windSpeed: 99,
     };
   });
 };
