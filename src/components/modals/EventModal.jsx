@@ -102,18 +102,35 @@ const EventModal = ({
         </div>
 
         {/* Google Maps Link */}
-          <div>
-            <label className="text-xs text-slate-700 font-medium flex items-center gap-1">
-              <Link2 size={14} /> Google Maps 連結
-            </label>
-            <textarea 
-              rows="2"
-              value={event.mapLink || ''} 
-              onChange={e => onChange({ ...event, mapLink: e.target.value })} 
-              className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all text-sm" 
-              placeholder='貼上 Google Maps 連結或 <iframe> HTML'
-            />
-          </div>
+        <div>
+          <label className="text-xs text-slate-700 font-medium flex items-center gap-1">
+            <MapPin size={14} /> Google Maps 連結
+          </label>
+          <textarea 
+            rows="2"
+            value={event.mapLink || ''} 
+            onChange={e => onChange({ ...event, mapLink: e.target.value })} 
+            className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all text-sm" 
+            placeholder='貼上 Google Maps 連結或 <iframe> HTML'
+          />
+        </div>
+
+        {/* External Link (e.g., tour agency, booking) */}
+        <div>
+          <label className="text-xs text-slate-700 font-medium flex items-center gap-1">
+            <Link2 size={14} /> 外部連結
+          </label>
+          <input 
+            type="url" 
+            value={event.externalUrl || ''} 
+            onChange={e => onChange({ ...event, externalUrl: e.target.value })} 
+            className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all text-sm" 
+            placeholder="旅行社網站、預訂連結等 (https://...)"
+          />
+          <p className="text-xs text-slate-500 mt-1">
+            💡 例如：旅行社網站、預訂頁面、活動官網等
+          </p>
+        </div>
 
         {/* Image URL */}
         <div>
@@ -180,6 +197,27 @@ const EventModal = ({
               />
             </div>
           )
+        )}
+
+        {/* Preview External Link */}
+        {event.externalUrl && (
+          <div className="rounded-xl border border-green-200 bg-green-50/50 p-3">
+            <div className="flex items-center gap-2">
+              <ExternalLink className="text-green-600 flex-shrink-0" size={16} />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-slate-700">相關連結</p>
+                <p className="text-xs text-slate-500 truncate">{event.externalUrl}</p>
+              </div>
+              <a
+                href={event.externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-shrink-0 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs rounded-lg transition-colors"
+              >
+                預覽
+              </a>
+            </div>
+          </div>
         )}
         
         <div className="flex gap-3 pt-2">

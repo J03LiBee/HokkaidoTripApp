@@ -131,6 +131,30 @@ const EventDetailModal = ({
           )
         )}
 
+        {/* External Link Button */}
+        {event.externalUrl && (
+          <div className="rounded-xl border border-green-200 bg-green-50/50 p-4">
+            <div className="flex items-start gap-3">
+              <ExternalLink className="text-green-600 flex-shrink-0 mt-1" size={20} />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-slate-700 mb-1">相關連結</p>
+                <p className="text-xs text-slate-500 mb-3 break-all">
+                  {event.externalUrl}
+                </p>
+                <a
+                  href={event.externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  <ExternalLink size={14} />
+                  打開連結
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Notes */}
         {event.notes && (
           <div className="bg-white/60 backdrop-blur-sm border border-slate-200 rounded-xl p-4">

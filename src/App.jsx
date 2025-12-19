@@ -49,7 +49,8 @@ function App() {
     type: 'activity',
     notes: '',
     mapLink: '',
-    imageUrl: ''
+    imageUrl: '',
+    externalUrl: ''
   });
 
   // Data from Firestore
@@ -105,7 +106,8 @@ function App() {
       type: 'activity', 
       notes: '',
       mapLink: '',
-      imageUrl: ''
+      imageUrl: '',
+      externalUrl: ''
     });
     setIsEventModalOpen(true);
   };
