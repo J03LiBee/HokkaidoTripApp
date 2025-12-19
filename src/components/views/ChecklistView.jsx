@@ -1,41 +1,59 @@
 /**
- * Simple and Compact Checklist View
- * Click item to edit
+ * Checklist View with Shared and Personal Lists
  */
 
 import React, { useState } from 'react';
-import { Plus, Trash2, Check, Edit2 } from 'lucide-react';
+import { Plus, Trash2, Check, Users, User } from 'lucide-react';
 import Modal from '@components/common/Modal';
 
-const ChecklistView = ({ checklist, onToggleCheck, onAddItem, onUpdateItem, onDeleteItem }) => {
+const ChecklistView = ({ 
+  personalChecklist, 
+  sharedChecklist,
+  onTogglePersonal, 
+  onToggleShared,
+  onAddPersonal, 
+  onAddShared,
+  onUpdatePersonal, 
+  onUpdateShared,
+  onDeletePersonal,
+  onDeleteShared
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [editingType, setEditingType] = useState(null); // 'personal' or 'shared'
   const [modalData, setModalData] = useState({
     text: '',
     notes: '',
-    checked: false
+    checked: false,
+    isShared: false
   });
 
-  const totalItems = checklist.length;
-  const checkedItems = checklist.filter(i => i.checked).length;
+  // Combine and calculate progress
+  const allItems = [...personalChecklist, ...sharedChecklist];
+  const totalItems = allItems.length;
+  const checkedItems = allItems.filter(i => i.checked).length;
   const progress = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
 
   const handleAddClick = () => {
     setEditingItem(null);
+    setEditingType(null);
     setModalData({
       text: '',
       notes: '',
-      checked: false
+      checked: false,
+      isShared: false
     });
     setIsModalOpen(true);
   };
 
-  const handleItemClick = (item) => {
+  const handleItemClick = (item, type) => {
     setEditingItem(item);
+    setEditingType(type);
     setModalData({
       text: item.text,
       notes: item.notes || '',
-      checked: item.checked
+      checked: item.checked,
+      isShared: type === 'shared'
     });
     setIsModalOpen(true);
   };
@@ -45,31 +63,51 @@ const ChecklistView = ({ checklist, onToggleCheck, onAddItem, onUpdateItem, onDe
     
     if (editingItem) {
       // Update existing item
-      onUpdateItem(editingItem.id, modalData);
+      if (editingType === 'shared') {
+        onUpdateShared(editingItem.id, modalData);
+      } else {
+        onUpdatePersonal(editingItem.id, modalData);
+      }
     } else {
       // Add new item
-      onAddItem(modalData);
+      if (modalData.isShared) {
+        onAddShared(modalData);
+      } else {
+        onAddPersonal(modalData);
+      }
     }
     setIsModalOpen(false);
   };
 
   const handleDelete = () => {
     if (editingItem && window.confirm('確定要刪除此項目？')) {
-      onDeleteItem(editingItem.id);
+      if (editingType === 'shared') {
+        onDeleteShared(editingItem.id);
+      } else {
+        onDeletePersonal(editingItem.id);
+      }
       setIsModalOpen(false);
     }
   };
 
-  const handleCheckboxClick = (item, e) => {
+  const handleCheckboxClick = (item, type, e) => {
     e.stopPropagation();
-    onToggleCheck(item);
+    if (type === 'shared') {
+      onToggleShared(item);
+    } else {
+      onTogglePersonal(item);
+    }
   };
 
-  const handleDeleteClick = async (itemId, e) => {
+  const handleDeleteClick = async (itemId, type, e) => {
     e.stopPropagation();
     if (window.confirm('確定要刪除此項目？')) {
       try {
-        await onDeleteItem(itemId);
+        if (type === 'shared') {
+          await onDeleteShared(itemId);
+        } else {
+          await onDeletePersonal(itemId);
+        }
         console.log('Item deleted successfully:', itemId);
       } catch (error) {
         console.error('Failed to delete item:', error);
@@ -78,27 +116,24 @@ const ChecklistView = ({ checklist, onToggleCheck, onAddItem, onUpdateItem, onDe
     }
   };
 
-  return (
-    <div className="space-y-4 pb-24 animate-fade-in">
-      {/* Progress Header */}
-      <div className="bg-white/60 backdrop-blur-sm border border-white/60 rounded-2xl p-4 shadow-sm">
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-serif text-slate-700">完成進度</h2>
-          <span className="text-2xl font-serif text-slate-700">
-            {checkedItems}/{totalItems}
-          </span>
-        </div>
-        <div className="bg-slate-200/50 rounded-full h-2.5 w-full overflow-hidden">
-          <div 
-            className="bg-gradient-to-r from-indigo-400 to-purple-400 h-full rounded-full transition-all duration-500" 
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
+  const ChecklistSection = ({ title, items, type, icon: Icon, color }) => (
+    <div className="space-y-2">
+      {/* Section Header */}
+      <div className="flex items-center gap-2 px-1">
+        <Icon size={16} className={`${color}`} />
+        <h3 className={`text-sm font-semibold ${color} uppercase tracking-wider`}>
+          {title}
+        </h3>
+        <span className="text-xs text-slate-400">({items.length})</span>
       </div>
 
-      {/* Checklist Items */}
-      <div className="space-y-2">
-        {checklist.map(item => (
+      {/* Items */}
+      {items.length === 0 ? (
+        <div className="bg-white/30 backdrop-blur-sm border border-white/40 rounded-xl p-4 text-center text-slate-400 text-sm">
+          還沒有{title}項目
+        </div>
+      ) : (
+        items.map(item => (
           <div 
             key={item.id}
             className={`bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl p-3 shadow-sm transition-all duration-200 ${
@@ -108,7 +143,7 @@ const ChecklistView = ({ checklist, onToggleCheck, onAddItem, onUpdateItem, onDe
             <div className="flex items-center gap-3">
               {/* Checkbox */}
               <button
-                onClick={(e) => handleCheckboxClick(item, e)}
+                onClick={(e) => handleCheckboxClick(item, type, e)}
                 className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
                   item.checked 
                     ? 'bg-indigo-500 border-indigo-500' 
@@ -121,7 +156,7 @@ const ChecklistView = ({ checklist, onToggleCheck, onAddItem, onUpdateItem, onDe
               {/* Content - Clickable */}
               <div 
                 className="flex-1 min-w-0 cursor-pointer"
-                onClick={() => handleItemClick(item)}
+                onClick={() => handleItemClick(item, type)}
               >
                 <span className={`block font-medium text-sm ${
                   item.checked 
@@ -140,7 +175,7 @@ const ChecklistView = ({ checklist, onToggleCheck, onAddItem, onUpdateItem, onDe
               {/* Delete Button */}
               <button
                 type="button"
-                onClick={(e) => handleDeleteClick(item.id, e)}
+                onClick={(e) => handleDeleteClick(item.id, type, e)}
                 className="flex-shrink-0 p-1.5 rounded-lg hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors z-10"
                 aria-label="刪除項目"
               >
@@ -148,17 +183,46 @@ const ChecklistView = ({ checklist, onToggleCheck, onAddItem, onUpdateItem, onDe
               </button>
             </div>
           </div>
-        ))}
+        ))
+      )}
+    </div>
+  );
+
+  return (
+    <div className="space-y-6 pb-24 animate-fade-in">
+      {/* Progress Header */}
+      <div className="bg-white/60 backdrop-blur-sm border border-white/60 rounded-2xl p-4 shadow-sm">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-lg font-serif text-slate-700">完成進度</h2>
+          <span className="text-2xl font-serif text-slate-700">
+            {checkedItems}/{totalItems}
+          </span>
+        </div>
+        <div className="bg-slate-200/50 rounded-full h-2.5 w-full overflow-hidden">
+          <div 
+            className="bg-gradient-to-r from-indigo-400 to-purple-400 h-full rounded-full transition-all duration-500" 
+            style={{ width: `${progress}%` }}
+          ></div>
+        </div>
       </div>
 
-      {/* Empty State */}
-      {checklist.length === 0 && (
-        <div className="bg-white/40 backdrop-blur-sm border border-white/60 rounded-2xl p-12 text-center">
-          <div className="text-5xl mb-3">📋</div>
-          <p className="text-slate-600 font-serif text-lg">還沒有清單項目</p>
-          <p className="text-sm text-slate-500 mt-1">點擊下方按鈕新增</p>
-        </div>
-      )}
+      {/* Shared Checklist Section */}
+      <ChecklistSection 
+        title="共享清單"
+        items={sharedChecklist}
+        type="shared"
+        icon={Users}
+        color="text-purple-600"
+      />
+
+      {/* Personal Checklist Section */}
+      <ChecklistSection 
+        title="個人清單"
+        items={personalChecklist}
+        type="personal"
+        icon={User}
+        color="text-indigo-600"
+      />
 
       {/* Add Button */}
       <button 
@@ -197,6 +261,29 @@ const ChecklistView = ({ checklist, onToggleCheck, onAddItem, onUpdateItem, onDe
               placeholder="額外說明"
             />
           </div>
+
+          {/* Shared Toggle - Only show when adding new item */}
+          {!editingItem && (
+            <div className="bg-slate-50 rounded-xl p-3 border border-slate-200">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={modalData.isShared}
+                  onChange={e => setModalData({ ...modalData, isShared: e.target.checked })}
+                  className="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <Users size={14} className="text-purple-600" />
+                    <span className="text-sm font-medium text-slate-700">共享清單</span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    所有用戶都可以看到和編輯此項目
+                  </p>
+                </div>
+              </label>
+            </div>
+          )}
 
           <div className="flex gap-3 pt-2">
             {editingItem && (

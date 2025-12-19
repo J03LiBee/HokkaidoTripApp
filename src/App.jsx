@@ -54,9 +54,10 @@ function App() {
   const { data: itinerary, loading: itineraryLoading } = useSharedCollection('itinerary', INITIAL_ITINERARY);
   const { data: expenses } = useSharedCollection('expenses', INITIAL_EXPENSES);
   const { data: budget } = useSharedCollection('budget', INITIAL_BUDGET);
+  const { data: sharedChecklist } = useSharedCollection('sharedChecklist', []);
   
   // USER-SPECIFIC DATA (only this user can see)
-  const { data: checklist } = useFirestoreCollection(user, 'checklist', INITIAL_CHECKLIST);
+  const { data: personalChecklist } = useFirestoreCollection(user, 'checklist', INITIAL_CHECKLIST);
 
   // Handlers
   const handleEventClick = (event) => {
@@ -132,41 +133,81 @@ function App() {
     }
   };
 
-  const handleToggleCheck = async (item) => {
+  // Personal Checklist Handlers
+  const handleTogglePersonal = async (item) => {
     if (!user) return;
     try {
       await updateDocument(user.uid, 'checklist', item.id, { 
         checked: !item.checked 
       });
     } catch (e) { 
-      console.error('Failed to update checklist:', e); 
+      console.error('Failed to update personal checklist:', e); 
     }
   };
 
-  const handleAddChecklistItem = async (itemData) => {
+  const handleAddPersonal = async (itemData) => {
     if (!user) return;
     try {
       await addDocument(user.uid, 'checklist', itemData);
     } catch (e) {
-      console.error('Failed to add checklist item:', e);
+      console.error('Failed to add personal checklist item:', e);
     }
   };
 
-  const handleUpdateChecklistItem = async (itemId, itemData) => {
+  const handleUpdatePersonal = async (itemId, itemData) => {
     if (!user) return;
     try {
       await updateDocument(user.uid, 'checklist', itemId, itemData);
     } catch (e) {
-      console.error('Failed to update checklist item:', e);
+      console.error('Failed to update personal checklist item:', e);
     }
   };
 
-  const handleDeleteChecklistItem = async (itemId) => {
+  const handleDeletePersonal = async (itemId) => {
     if (!user) return;
     try {
       await deleteDocument(user.uid, 'checklist', itemId);
     } catch (e) {
-      console.error('Failed to delete checklist item:', e);
+      console.error('Failed to delete personal checklist item:', e);
+    }
+  };
+
+  // Shared Checklist Handlers
+  const handleToggleShared = async (item) => {
+    if (!user) return;
+    try {
+      await updateSharedDocument('sharedChecklist', item.id, { 
+        checked: !item.checked 
+      });
+    } catch (e) { 
+      console.error('Failed to update shared checklist:', e); 
+    }
+  };
+
+  const handleAddShared = async (itemData) => {
+    if (!user) return;
+    try {
+      await addSharedDocument('sharedChecklist', itemData);
+    } catch (e) {
+      console.error('Failed to add shared checklist item:', e);
+    }
+  };
+
+  const handleUpdateShared = async (itemId, itemData) => {
+    if (!user) return;
+    try {
+      await updateSharedDocument('sharedChecklist', itemId, itemData);
+    } catch (e) {
+      console.error('Failed to update shared checklist item:', e);
+    }
+  };
+
+  const handleDeleteShared = async (itemId) => {
+    if (!user) return;
+    try {
+      await deleteSharedDocument('sharedChecklist', itemId);
+    } catch (e) {
+      console.error('Failed to delete shared checklist item:', e);
     }
   };
 
@@ -259,8 +300,9 @@ function App() {
         {activeTab === 'dashboard' && (
           <Dashboard 
             itinerary={itinerary} 
-            budget={budget} 
-            checklist={checklist}
+            budget={budget}
+            personalChecklist={personalChecklist}
+            sharedChecklist={sharedChecklist}
             onNavigate={setActiveTab} 
           />
         )}
@@ -274,11 +316,16 @@ function App() {
 
         {activeTab === 'checklist' && (
           <ChecklistView 
-            checklist={checklist}
-            onToggleCheck={handleToggleCheck}
-            onAddItem={handleAddChecklistItem}
-            onUpdateItem={handleUpdateChecklistItem}
-            onDeleteItem={handleDeleteChecklistItem}
+            personalChecklist={personalChecklist}
+            sharedChecklist={sharedChecklist}
+            onTogglePersonal={handleTogglePersonal}
+            onToggleShared={handleToggleShared}
+            onAddPersonal={handleAddPersonal}
+            onAddShared={handleAddShared}
+            onUpdatePersonal={handleUpdatePersonal}
+            onUpdateShared={handleUpdateShared}
+            onDeletePersonal={handleDeletePersonal}
+            onDeleteShared={handleDeleteShared}
           />
         )}
 

@@ -15,8 +15,9 @@ import {
 } from 'lucide-react';
 import { getDaysUntil, getNextEvent } from '@utils/dateHelpers';
 import GlassCard from '@components/common/GlassCard';
+import WeatherWidget from '@components/common/WeatherWidget';
 
-const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
+const Dashboard = ({ itinerary, budget, personalChecklist, sharedChecklist, onNavigate }) => {
   const [jpy, setJpy] = useState(1000);
   // Countdown Logic
   const diffDays = getDaysUntil('2025-12-31T00:00:00');
@@ -27,9 +28,10 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
   // Budget Calc
   const totalSpent = budget.reduce((sum, item) => sum + Number(item.amount || 0), 0);
   
-  // Checklist Calc
-  const totalItems = checklist.length;
-  const checkedItems = checklist.filter(i => i.checked).length;
+  // Checklist Calc - combine personal and shared
+  const allChecklist = [...(personalChecklist || []), ...(sharedChecklist || [])];
+  const totalItems = allChecklist.length;
+  const checkedItems = allChecklist.filter(i => i.checked).length;
   const progress = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
 
   return (
@@ -46,7 +48,7 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
         </div>
       </div>
 
-      {/* Weather/Countdown Hero Card */}
+      {/* Countdown Hero Card */}
       <GlassCard className="relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
           <CloudSnow size={120} />
@@ -57,13 +59,11 @@ const Dashboard = ({ itinerary, budget, checklist, onNavigate }) => {
           </div>
           <h2 className="text-5xl font-serif text-slate-700 mb-1">D-{diffDays}</h2>
           <p className="text-slate-500 font-medium">距離出發還有 {diffDays} 天</p>
-          <div className="flex gap-4 mt-4 text-xs text-slate-400 font-mono border-t border-slate-200/50 pt-3 w-full justify-center">
-            <span>札幌</span>
-            <span>-5°C</span>
-            <span>小雪</span>
-          </div>
         </div>
       </GlassCard>
+
+      {/* Weather Forecast Widget */}
+      <WeatherWidget />
 
       {/* Quick Actions Grid */}
       <div className="grid grid-cols-2 gap-4">
