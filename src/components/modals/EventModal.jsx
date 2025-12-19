@@ -3,8 +3,9 @@
  */
 
 import React from 'react';
-import { Save, Trash2, MapPin, Image } from 'lucide-react';
+import { Save, Trash2, MapPin, Image, Link2, ExternalLink } from 'lucide-react';
 import Modal from '@components/common/Modal';
+import { getEmbedUrl, isShortLink } from '@utils/mapHelpers';
 
 const EventModal = ({ 
   isOpen, 
@@ -17,25 +18,8 @@ const EventModal = ({
 }) => {
   if (!event) return null;
 
-  // Extract iframe src from Google Maps embed HTML
-  const getEmbedUrl = (mapLink) => {
-    if (!mapLink) return null;
-    
-    // Try to extract src from iframe HTML
-    const srcMatch = mapLink.match(/src=["']([^"']+)["']/);
-    if (srcMatch) {
-      return srcMatch[1];
-    }
-    
-    // If it's already a URL (backward compatibility)
-    if (mapLink.startsWith('http')) {
-      return mapLink;
-    }
-    
-    return null;
-  };
-
   const embedUrl = getEmbedUrl(event.mapLink);
+  const isShort = isShortLink(event.mapLink);
 
   return (
     <Modal 
@@ -116,18 +100,15 @@ const EventModal = ({
         {/* Google Maps Link */}
           <div>
             <label className="text-xs text-slate-700 font-medium flex items-center gap-1">
-              <MapPin size={14} /> Google Maps Embed HTML
+              <Link2 size={14} /> Google Maps 連結
             </label>
             <textarea 
               rows="2"
               value={event.mapLink || ''} 
               onChange={e => onChange({ ...event, mapLink: e.target.value })} 
-              className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all text-sm font-mono" 
-              placeholder='貼上 Google Maps 的 <iframe src="..." ... ></iframe>'
+              className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all text-sm" 
+              placeholder='貼上 Google Maps 連結或 <iframe> HTML'
             />
-            <p className="text-xs text-slate-500 mt-1">
-              Google Maps → 分享 → 嵌入地圖 → 複製 HTML
-            </p>
           </div>
 
         {/* Image URL */}
@@ -160,17 +141,41 @@ const EventModal = ({
 
         {/* Preview Map */}
         {embedUrl && (
-          <div className="rounded-xl overflow-hidden border border-slate-200 h-48">
-            <iframe
-              src={embedUrl}
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
+          isShort ? (
+            <div className="rounded-xl border border-indigo-200 bg-indigo-50/50 p-4">
+              <div className="flex items-start gap-3">
+                <MapPin className="text-indigo-600 flex-shrink-0 mt-1" size={20} />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-slate-700 mb-1">Google Maps 位置</p>
+                  <p className="text-xs text-slate-500 mb-3">
+                    已儲存位置連結，點擊按鈕在 Google Maps 中查看
+                  </p>
+                  <a
+                    href={embedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm rounded-lg transition-colors"
+                  >
+                    <ExternalLink size={14} />
+                    在 Google Maps 中打開
+                  </a>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-xl overflow-hidden border border-slate-200 h-48">
+              <iframe
+                src={embedUrl}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Google Map Preview"
+              />
+            </div>
+          )
         )}
         
         <div className="flex gap-3 pt-2">
