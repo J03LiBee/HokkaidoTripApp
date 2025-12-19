@@ -41,10 +41,10 @@ const ExpenseTracker = ({ expenses, onAddExpense, onUpdateExpense, onDeleteExpen
 
   // Calculate who owes whom
   const calculateBalance = () => {
-    let jasonPaid = 0;
-    let joePaid = 0;
-    let jasonOwes = 0;
-    let joeOwes = 0;
+    let jasonTotalPaid = 0;  // Jason 總共付出的金額
+    let joeTotalPaid = 0;    // Joe 總共付出的金額
+    let jasonShare = 0;      // Jason 應負擔的金額
+    let joeShare = 0;        // Joe 應負擔的金額
 
     expenses.forEach(exp => {
       const amountInHKD = exp.currency === 'JPY' 
@@ -52,22 +52,34 @@ const ExpenseTracker = ({ expenses, onAddExpense, onUpdateExpense, onDeleteExpen
         : Number(exp.amount);
 
       if (exp.paidBy === 'Jason') {
-        jasonPaid += amountInHKD;
+        jasonTotalPaid += amountInHKD;
         if (exp.isSplit) {
-          joeOwes += amountInHKD / 2; // Joe 欠 Jason 一半
+          // 牙公數：兩人各負擔一半
+          jasonShare += amountInHKD / 2;
+          joeShare += amountInHKD / 2;
+        } else {
+          // 不是牙公數：Jason 全額負擔
+          jasonShare += amountInHKD;
         }
       } else if (exp.paidBy === 'Joe') {
-        joePaid += amountInHKD;
+        joeTotalPaid += amountInHKD;
         if (exp.isSplit) {
-          jasonOwes += amountInHKD / 2; // Jason 欠 Joe 一半
+          // 牙公數：兩人各負擔一半
+          jasonShare += amountInHKD / 2;
+          joeShare += amountInHKD / 2;
+        } else {
+          // 不是牙公數：Joe 全額負擔
+          joeShare += amountInHKD;
         }
       }
     });
 
-    const netBalance = joeOwes - jasonOwes;
+    // 淨結算：正數表示 Joe 欠 Jason，負數表示 Jason 欠 Joe
+    const netBalance = jasonTotalPaid - jasonShare;
+    
     return {
-      jasonPaid,
-      joePaid,
+      jasonPaid: jasonTotalPaid,
+      joePaid: joeTotalPaid,
       netBalance, // 正數表示 Joe 欠 Jason，負數表示 Jason 欠 Joe
     };
   };

@@ -30,7 +30,7 @@ import EventDetailModal from '@components/modals/EventDetailModal';
 import LoginScreen from '@components/auth/LoginScreen';
 
 function App() {
-  const { user, isLoading: authLoading, signInWithGoogle, signInAnonymous, signOut } = useAuth();
+  const { user, isLoading: authLoading, signInWithGoogle, signInAnonymous, signOut, isAnonymous } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   
   // Modal States
@@ -66,6 +66,12 @@ function App() {
   };
 
   const handleEditEvent = () => {
+    // Guest cannot edit - 訪客不能編輯
+    if (isAnonymous) {
+      alert('訪客模式無法編輯行程，請使用 Google 登入');
+      return;
+    }
+    
     // From preview modal, switch to edit mode
     if (viewingEvent) {
       setEditingEvent(viewingEvent);
@@ -76,6 +82,12 @@ function App() {
   };
 
   const handleAddNewEvent = (date = '2025-12-31', time = '12:00') => {
+    // Guest cannot add - 訪客不能新增
+    if (isAnonymous) {
+      alert('訪客模式無法新增行程，請使用 Google 登入');
+      return;
+    }
+    
     // Add new event
     setEditingEvent(null);
     setNewEvent({ 
@@ -128,6 +140,33 @@ function App() {
       });
     } catch (e) { 
       console.error('Failed to update checklist:', e); 
+    }
+  };
+
+  const handleAddChecklistItem = async (itemData) => {
+    if (!user) return;
+    try {
+      await addDocument(user.uid, 'checklist', itemData);
+    } catch (e) {
+      console.error('Failed to add checklist item:', e);
+    }
+  };
+
+  const handleUpdateChecklistItem = async (itemId, itemData) => {
+    if (!user) return;
+    try {
+      await updateDocument(user.uid, 'checklist', itemId, itemData);
+    } catch (e) {
+      console.error('Failed to update checklist item:', e);
+    }
+  };
+
+  const handleDeleteChecklistItem = async (itemId) => {
+    if (!user) return;
+    try {
+      await deleteDocument(user.uid, 'checklist', itemId);
+    } catch (e) {
+      console.error('Failed to delete checklist item:', e);
     }
   };
 
@@ -197,14 +236,14 @@ function App() {
 
   return (
     <div className="relative min-h-screen bg-slate-100 font-sans text-slate-800 overflow-hidden">
-      {/* Dynamic Backgrounds */}
+      {/* Dynamic Backgrounds - Darker Version */}
       <div className="fixed inset-0 z-0">
-        {/* Main Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200"></div>
+        {/* Main Gradient - Darker */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-slate-200 to-slate-300"></div>
         {/* Subtle Orbs for "Northern Lights" feel */}
-        <div className="absolute top-0 left-0 w-full h-2/3 bg-gradient-to-b from-purple-100/30 to-transparent mix-blend-overlay"></div>
-        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-[20%] left-[-10%] w-[400px] h-[400px] bg-teal-100/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-full h-2/3 bg-gradient-to-b from-purple-200/40 to-transparent mix-blend-overlay"></div>
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-300/30 rounded-full blur-3xl"></div>
+        <div className="absolute top-[20%] left-[-10%] w-[400px] h-[400px] bg-teal-200/30 rounded-full blur-3xl"></div>
       </div>
 
       <EnhancedSnowfall />
@@ -237,6 +276,9 @@ function App() {
           <ChecklistView 
             checklist={checklist}
             onToggleCheck={handleToggleCheck}
+            onAddItem={handleAddChecklistItem}
+            onUpdateItem={handleUpdateChecklistItem}
+            onDeleteItem={handleDeleteChecklistItem}
           />
         )}
 
@@ -253,8 +295,11 @@ function App() {
 
       <BottomNav 
         activeTab={activeTab} 
-        onTabChange={setActiveTab} 
+        onTabChange={setActiveTab}
+        isAnonymous={isAnonymous}
       />
+
+      {/* Modals should be at the end for proper z-index */}
 
       <EventDetailModal
         isOpen={isEventDetailModalOpen}

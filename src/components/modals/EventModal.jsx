@@ -44,14 +44,14 @@ const EventModal = ({
       title={isEditing ? '編輯行程' : '新增行程'}
     >
       <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs text-slate-700 font-medium">日期</label>
             <input 
               type="date" 
               value={event.date} 
               onChange={e => onChange({ ...event, date: e.target.value })} 
-              className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" 
+              className="w-full bg-white/80 border border-slate-200 rounded-xl px-2 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" 
             />
           </div>
           <div>
@@ -60,7 +60,8 @@ const EventModal = ({
               type="time" 
               value={event.time} 
               onChange={e => onChange({ ...event, time: e.target.value })} 
-              className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" 
+              step="900"
+              className="w-full bg-white/80 border border-slate-200 rounded-xl px-2 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" 
             />
           </div>
         </div>
@@ -76,13 +77,13 @@ const EventModal = ({
           />
         </div>
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs text-slate-700 font-medium">類型</label>
             <select 
               value={event.type} 
               onChange={e => onChange({ ...event, type: e.target.value })} 
-              className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all"
+              className="w-full bg-white/80 border border-slate-200 rounded-xl px-2 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all"
             >
               <option value="activity">活動</option>
               <option value="food">餐飲</option>
@@ -96,7 +97,7 @@ const EventModal = ({
               type="text" 
               value={event.location} 
               onChange={e => onChange({ ...event, location: e.target.value })} 
-              className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" 
+              className="w-full bg-white/80 border border-slate-200 rounded-xl px-2 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all" 
             />
           </div>
         </div>

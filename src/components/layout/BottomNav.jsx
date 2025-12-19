@@ -5,16 +5,21 @@
 import React from 'react';
 import { Home, CalendarDays, CheckSquare, Receipt } from 'lucide-react';
 
-const BottomNav = ({ activeTab, onTabChange }) => {
-  const navItems = [
-    { id: 'dashboard', icon: Home, label: '首頁' },
-    { id: 'itinerary', icon: CalendarDays, label: '行程' },
-    { id: 'expenses', icon: Receipt, label: '記帳' },
-    { id: 'checklist', icon: CheckSquare, label: '清單' },
+const BottomNav = ({ activeTab, onTabChange, isAnonymous = false }) => {
+  const allNavItems = [
+    { id: 'dashboard', icon: Home, label: '首頁', guestAllowed: true },
+    { id: 'itinerary', icon: CalendarDays, label: '行程', guestAllowed: true },
+    { id: 'expenses', icon: Receipt, label: '記帳', guestAllowed: false },
+    { id: 'checklist', icon: CheckSquare, label: '清單', guestAllowed: false },
   ];
+  
+  // Filter navigation items based on guest status
+  const navItems = isAnonymous 
+    ? allNavItems.filter(item => item.guestAllowed)
+    : allNavItems;
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-slate-200 z-50 pb-safe">
+    <nav className="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-slate-200 z-[100] pb-safe">
       <div className="flex justify-around items-center h-16 max-w-md mx-auto">
         {navItems.map(({ id, icon: Icon, label }) => {
           const isActive = activeTab === id;

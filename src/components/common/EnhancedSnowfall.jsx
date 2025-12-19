@@ -54,7 +54,7 @@ const EnhancedSnowfall = () => {
   return (
     <div 
       ref={containerRef}
-      className="fixed inset-0 pointer-events-none z-0 overflow-hidden" 
+      className="fixed inset-0 pointer-events-none z-[1] overflow-hidden" 
       aria-hidden="true"
     >
       {generateSnowflakes().map((flake) => (

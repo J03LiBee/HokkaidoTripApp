@@ -43,7 +43,7 @@ const Header = ({ activeTab, onAddEvent, user, onSignOut }) => {
   };
 
   return (
-    <header className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200 px-4 h-16 flex items-center justify-between shadow-sm">
+    <header className="fixed top-0 w-full z-[100] bg-white/80 backdrop-blur-xl border-b border-slate-200 px-4 h-16 flex items-center justify-between shadow-sm">
       <div>
         <h1 className="text-lg font-serif text-slate-800 tracking-tight">
           {getTitle()}

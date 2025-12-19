@@ -86,13 +86,7 @@ export const INITIAL_ITINERARY = [
   },
 ];
 
-export const INITIAL_CHECKLIST = [
-  { id: '1', text: '護照 (Passport)', checked: false, category: '重要' },
-  { id: '2', text: '日元現金 / Credit Card', checked: false, category: '重要' },
-  { id: '3', text: 'VJW QR Code', checked: false, category: '重要' },
-  { id: '4', text: 'SIM 卡', checked: false, category: '電子' },
-  { id: '5', text: '冰爪 (雪地防滑)', checked: false, category: '衣物' },
-];
+export const INITIAL_CHECKLIST = [];
 
 export const INITIAL_BUDGET = [
   { id: '1', item: '機票', amount: 5580, payer: 'Jason', status: '已結算' },
